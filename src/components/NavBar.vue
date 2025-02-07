@@ -12,7 +12,7 @@
                         <router-link to="/" class="nav-link">Главная</router-link>
                     </li>
                     <li class="nav-item">
-                        <router-link to="/login" class="nav-link btn btn-gradient ms-3">Войти</router-link>
+                        <router-link to="/auth" class="nav-link btn btn-gradient ms-3">Войти</router-link>
                     </li>
                 </ul>
             </div>
@@ -30,6 +30,7 @@ export default {
 header {
     background: linear-gradient(135deg, #1e1e2f, #2a2a40);
     border-bottom: 1px solid rgba(255, 107, 53, 0.2);
+    padding: 1rem 0;
 }
 
 .navbar-brand {

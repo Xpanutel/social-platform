@@ -1,6 +1,5 @@
 <template>
     <div class="landing-page">
-        <NavBar />
         <main class="container mt-5">
             <div class="row align-items-center">
                 <div class="col-md-6">
@@ -37,22 +36,12 @@
                 </div>
             </div>
         </main>
-
-        <!-- Футер -->
-        <footer class="text-center py-4 mt-5">
-            <p class="mb-0">&copy; 2025 SocialPlatform. Все права защищены.</p>
-        </footer>
     </div>
 </template>
 
 <script>
-import NavBar from '@/components/NavBar.vue';
-
 export default {
     name: 'LandingPage',
-    components: {
-        NavBar
-    },
     data() {
         return {
             cards: [
@@ -73,7 +62,6 @@ export default {
     }
 }
 </script>
-
 
 <style scoped>
 .logo-container {

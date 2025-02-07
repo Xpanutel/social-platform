@@ -1,13 +1,23 @@
-<!-- src/App.vue -->
 <template>
   <div id="app">
-    <router-view></router-view>
+    <NavBar />
+    <main class="main-content">
+      <router-view></router-view>
+    </main>
+    <FooterBar />
   </div>
 </template>
 
 <script>
+import NavBar from '@/components/NavBar.vue';
+import FooterBar from '@/components/FooterBar.vue';
+
 export default {
-  name: 'App'
+  name: 'App',
+  components: {
+    NavBar,
+    FooterBar
+  }
 }
 </script>
 
@@ -20,4 +30,3 @@ export default {
   color: #2c3e50;
 }
 </style>
-
