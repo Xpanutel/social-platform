@@ -9,8 +9,9 @@
                         новых друзей. Присоединяйся к нам и начни свой путь в мире новых возможностей!
                     </p>
                     <div class="actions">
-                        <router-link to="/register" class="btn btn-primary btn-lg me-3">Зарегистрироваться</router-link>
-                        <router-link to="/login" class="btn btn-outline-primary btn-lg">Войти</router-link>
+                        <router-link to="/profile" class="btn btn-primary btn-lg me-3">Личный кабинет</router-link>
+                        <router-link to="/auth" class="btn btn-primary btn-lg me-3">Зарегистрироваться</router-link>
+                        <router-link to="/auth" class="btn btn-outline-primary btn-lg">Войти</router-link>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -33,6 +34,19 @@
                             <p class="card-text">{{ card.text }}</p>
                         </div>
                     </div>
+                </div>
+            </div>
+
+            <!-- Блок с кнопкой для перехода на инициативы -->
+            <div class="row mt-5">
+                <div class="col-12 text-center">
+                    <h2 class="mb-4 fw-bold">Инициативы</h2>
+                    <p class="lead mb-4">
+                        Узнайте больше о наших инициативах, поддержите их или предложите свою идею!
+                    </p>
+                    <router-link to="/initiatives" class="btn btn-primary btn-lg">
+                        Перейти к инициативам
+                    </router-link>
                 </div>
             </div>
         </main>
@@ -98,7 +112,7 @@ export default {
     color: #ffffff;
 }
 
-h1 {
+h1,h2 {
     color: #ff6b35;
 }
 

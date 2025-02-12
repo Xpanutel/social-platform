@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router';
 import LandingPage from '@/views/LandingPage.vue';
 import AuthPage from '@/views/AuthPage.vue';
 import ProfilePage from '@/views/ProfilePage.vue';
+import InitiativesPage from '@/views/InitiativesPage.vue';
+import InitiativeDetail from '@/views/InitiativeDetail.vue';
 
 const routes = [
   {
@@ -18,7 +20,17 @@ const routes = [
     path: '/profile',
     name: 'ProfilePage',
     component: ProfilePage
-  }
+  },
+  {
+    path: '/initiatives',
+    name: 'Initiatives',
+    component: InitiativesPage
+  },
+  {
+    path: '/initiatives/:id',
+    name: 'InitiativeDetail',
+    component: InitiativeDetail
+  },
 ];
 
 const router = createRouter({
