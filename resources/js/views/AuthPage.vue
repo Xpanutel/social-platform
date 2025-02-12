@@ -27,15 +27,19 @@
                             </p>
                         </div>
 
+                        <!-- Ошибки -->
+                        <div v-if="errorMessage" class="alert alert-danger">
+                            {{ errorMessage }}
+                        </div>
+
                         <!-- Форма авторизации -->
                         <transition name="fade" mode="out-in">
                             <form v-if="isLoginForm" @submit.prevent="handleLogin" class="auth-form">
                                 <h2 class="text-center mb-4">Вход в систему</h2>
                                 <div class="mb-3">
-                                    <label for="login-identifier" class="form-label">Email или номер телефона</label>
+                                    <label for="login-identifier" class="form-label">Email</label>
                                     <input type="text" class="form-control" id="login-identifier"
-                                        v-model="loginData.identifier" placeholder="Введите email или номер телефона"
-                                        required />
+                                        v-model="loginData.identifier" placeholder="Введите email" required />
                                 </div>
                                 <div class="mb-3">
                                     <label for="login-password" class="form-label">Пароль</label>
@@ -55,12 +59,12 @@
                                     <div class="col-md-6 mb-3">
                                         <label for="register-first-name" class="form-label">Имя</label>
                                         <input type="text" class="form-control" id="register-first-name"
-                                            v-model="registerData.firstName" placeholder="Введите имя" required />
+                                            v-model="registerData.first_name" placeholder="Введите имя" required />
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label for="register-last-name" class="form-label">Фамилия</label>
                                         <input type="text" class="form-control" id="register-last-name"
-                                            v-model="registerData.lastName" placeholder="Введите фамилию" required />
+                                            v-model="registerData.last_name" placeholder="Введите фамилию" required />
                                     </div>
                                 </div>
                                 <div class="mb-3">
@@ -99,35 +103,83 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'AuthPage',
     data() {
         return {
-            isLoginForm: true, 
+            isLoginForm: true,
             loginData: {
-                identifier: '', 
+                identifier: '', // email
                 password: ''
             },
             registerData: {
-                firstName: '',
-                lastName: '',
+                first_name: '',
+                last_name: '',
                 birthdate: '',
                 phone: '',
                 email: '',
                 password: '',
                 bio: ''
-            }
+            },
+            errorMessage: '' // Для отображения ошибок
         };
     },
     methods: {
         toggleForm(formType) {
             this.isLoginForm = formType === 'login';
+            this.errorMessage = ''; // Очистка ошибок при переключении форм
         },
-        handleLogin() {
-            alert(`Вход выполнен: ${this.loginData.identifier}`);
+
+        // Метод для авторизации
+        async handleLogin() {
+            try {
+                const response = await axios.post('/login', {
+                    email: this.loginData.identifier,
+                    password: this.loginData.password
+                });
+
+                // Сохраняем токен в localStorage
+                localStorage.setItem('access_token', response.data.access_token);
+
+                // Перенаправляем пользователя на защищенную страницу
+                this.$router.push('/profile'); // Замените на ваш маршрут
+            } catch (error) {
+                if (error.response) {
+                    this.errorMessage = error.response.data.message || 'Ошибка при входе';
+                } else {
+                    this.errorMessage = 'Ошибка сети';
+                }
+            }
         },
-        handleRegister() {
-            alert(`Регистрация выполнена: ${this.registerData.firstName} ${this.registerData.lastName}`);
+
+        // Метод для регистрации
+        async handleRegister() {
+            try {
+                const response = await axios.post('/register', this.registerData);
+
+                // Сохраняем токен в localStorage
+                localStorage.setItem('access_token', response.data.access_token);
+
+                // Перенаправляем пользователя на защищенную страницу
+                this.$router.push('/profile'); // Замените на ваш маршрут
+            } catch (error) {
+                if (error.response) {
+                    // Логируем ошибку
+                    console.error('Ошибка при регистрации:', error.response.data);
+
+                    // Отображаем сообщение об ошибке
+                    if (error.response.data.errors) {
+                        // Если есть ошибки валидации
+                        this.errorMessage = Object.values(error.response.data.errors).join(', ');
+                    } else {
+                        this.errorMessage = error.response.data.message || 'Ошибка при регистрации';
+                    }
+                } else {
+                    this.errorMessage = 'Ошибка сети';
+                }
+            }
         }
     }
 };
