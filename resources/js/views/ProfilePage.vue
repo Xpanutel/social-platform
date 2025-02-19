@@ -2,13 +2,10 @@
     <div class="profile-page">
         <main class="container mt-5">
             <div class="row">
-                <!-- Левая колонка: Профиль и настройки -->
                 <div class="col-md-4">
                     <ProfileHeader :user="user" />
                     <ProfileSettings :user="user" @update-user="updateUser" />
                 </div>
-
-                <!-- Правая колонка: Стена с постами -->
                 <div class="col-md-8">
                     <PostForm @add-post="addPost" />
                     <PostList :posts="posts" :likedPosts="user.likedPosts" @like-post="likePost"
@@ -24,6 +21,7 @@ import ProfileHeader from '@/components/ProfileHeader.vue';
 import ProfileSettings from '@/components/ProfileSettings.vue';
 import PostForm from '@/components/PostForm.vue';
 import PostList from '@/components/PostList.vue';
+import axios from 'axios';
 
 export default {
     name: 'ProfilePage',
@@ -36,67 +34,108 @@ export default {
     data() {
         return {
             user: {
-                avatar: 'https://via.placeholder.com/150', // Ссылка на аватарку
-                firstName: 'Иван',
-                lastName: 'Иванов',
-                birthdate: '1990-01-01',
-                phone: '+7 (999) 123-45-67',
-                email: 'ivan@example.com',
-                password: '********',
-                likedPosts: [] // Список лайкнутых постов
+                avatar: '',
+                first_name: '',
+                last_name: '',
+                birthdate: '',
+                phone: '',
+                email: '',
+                bio: '',
+                likedPosts: []
             },
-            posts: [
-                {
-                    id: 1,
-                    text: 'Привет, это мой первый пост!',
-                    likes: 10,
-                    comments: [
-                        { id: 1, text: 'Круто!', author: 'Петр' },
-                        { id: 2, text: 'Привет!', author: 'Анна' }
-                    ]
-                },
-                {
-                    id: 2,
-                    text: 'Сегодня отличный день!',
-                    likes: 5,
-                    comments: []
-                }
-            ]
+            posts: []
         };
     },
+    async created() {
+        await this.fetchUserData();
+        await this.fetchPosts();
+    },
     methods: {
-        updateUser(updatedUser) {
-            this.user = { ...this.user, ...updatedUser };
-            alert('Данные успешно обновлены!');
-        },
-        addPost(newPost) {
-            this.posts.unshift({
-                id: Date.now(),
-                text: newPost,
-                likes: 0,
-                comments: []
-            });
-        },
-        likePost(postId) {
-            if (this.user.likedPosts.includes(postId)) {
-                alert('Вы уже лайкнули этот пост!');
-                return;
-            }
-
-            const post = this.posts.find(p => p.id === postId);
-            if (post) {
-                post.likes += 1;
-                this.user.likedPosts.push(postId); // Добавляем пост в список лайкнутых
-            }
-        },
-        addComment({ postId, comment }) {
-            const post = this.posts.find(p => p.id === postId);
-            if (post) {
-                post.comments.push({
-                    id: Date.now(),
-                    text: comment,
-                    author: this.user.firstName
+        async fetchUserData() {
+            try {
+                const response = await axios.get('/api/me', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
+                        'Accept': 'application/json' // Добавлено
+                    }
                 });
+                console.log('Данные пользователя:', response.data);
+                this.user = response.data;
+            } catch (error) {
+                console.error('Ошибка:', error.response);
+            }
+        },
+        async fetchPosts() {
+            try {
+                const response = await axios.get('/api/posts', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                this.posts = response.data;
+            } catch (error) {
+                console.error('Ошибка при загрузке постов:', error);
+                alert('Не удалось загрузить посты');
+            }
+        },
+        async addPost(newPost) {
+            try {
+                const response = await axios.post('/api/posts', { text: newPost }, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                this.posts.unshift(response.data);
+            } catch (error) {
+                console.error('Ошибка при создании поста:', error);
+                alert('Не удалось опубликовать пост');
+            }
+        },
+        async likePost(postId) {
+            try {
+                const response = await axios.post(`/api/posts/${postId}/like`, {}, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                const postIndex = this.posts.findIndex(post => post.id === postId);
+                if (postIndex !== -1) {
+                    this.posts[postIndex].likes = response.data.likes;
+                    this.user.likedPosts.push(postId);
+                }
+            } catch (error) {
+                console.error('Ошибка при лайке поста:', error);
+                alert('Не удалось поставить лайк');
+            }
+        },
+        async addComment({ postId, comment }) {
+            try {
+                const response = await axios.post(`/api/posts/${postId}/comment`, { text: comment }, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                const postIndex = this.posts.findIndex(post => post.id === postId);
+                if (postIndex !== -1) {
+                    this.posts[postIndex].comments.push(response.data);
+                }
+            } catch (error) {
+                console.error('Ошибка при добавлении комментария:', error);
+                alert('Не удалось добавить комментарий');
+            }
+        },
+        async updateUser(updatedUser) {
+            try {
+                const response = await axios.put('/user', updatedUser, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                this.user = response.data;
+                alert('Данные успешно обновлены!');
+            } catch (error) {
+                console.error('Ошибка при обновлении данных:', error);
+                alert('Не удалось обновить данные');
             }
         }
     }

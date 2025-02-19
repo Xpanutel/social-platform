@@ -47,9 +47,9 @@
                                         v-model="loginData.password" placeholder="Введите пароль" required />
                                 </div>
                                 <button type="submit" class="btn btn-primary w-100">Войти</button>
-                                <p class="text-center mt-3">
+                                <!-- <p class="text-center mt-3">
                                     <router-link to="/forgot-password" class="text-muted">Забыли пароль?</router-link>
-                                </p>
+                                </p> -->
                             </form>
 
                             <!-- Форма регистрации -->
@@ -110,6 +110,7 @@ export default {
     data() {
         return {
             isLoginForm: true,
+            access_token: '',
             loginData: {
                 identifier: '', // email
                 password: ''
@@ -131,11 +132,10 @@ export default {
             this.isLoginForm = formType === 'login';
             this.errorMessage = ''; // Очистка ошибок при переключении форм
         },
-
         // Метод для авторизации
         async handleLogin() {
             try {
-                const response = await axios.post('/login', {
+                const response = await axios.post('/api/login', {
                     email: this.loginData.identifier,
                     password: this.loginData.password
                 });
@@ -144,7 +144,7 @@ export default {
                 localStorage.setItem('access_token', response.data.access_token);
 
                 // Перенаправляем пользователя на защищенную страницу
-                this.$router.push('/profile'); // Замените на ваш маршрут
+                this.$router.push('/profile');
             } catch (error) {
                 if (error.response) {
                     this.errorMessage = error.response.data.message || 'Ошибка при входе';
@@ -157,13 +157,13 @@ export default {
         // Метод для регистрации
         async handleRegister() {
             try {
-                const response = await axios.post('/register', this.registerData);
+                const response = await axios.post('/api/register', this.registerData);
 
                 // Сохраняем токен в localStorage
                 localStorage.setItem('access_token', response.data.access_token);
 
                 // Перенаправляем пользователя на защищенную страницу
-                this.$router.push('/profile'); // Замените на ваш маршрут
+                this.$router.push('/profile');
             } catch (error) {
                 if (error.response) {
                     // Логируем ошибку

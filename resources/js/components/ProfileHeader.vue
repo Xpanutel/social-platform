@@ -1,7 +1,7 @@
 <template>
     <div class="profile-header text-center mb-4">
         <img :src="user.avatar" alt="Аватарка" class="avatar rounded-circle mb-3" />
-        <h2>{{ user.firstName }} {{ user.lastName }}</h2>
+        <h2>{{ user.first_name }} {{ user.last_name }}</h2>
         <p class="text-muted">Дата рождения: {{ user.birthdate }}</p>
     </div>
 </template>

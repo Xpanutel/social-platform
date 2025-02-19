@@ -9,9 +9,8 @@
                         новых друзей. Присоединяйся к нам и начни свой путь в мире новых возможностей!
                     </p>
                     <div class="actions">
-                        <router-link to="/profile" class="btn btn-primary btn-lg me-3">Личный кабинет</router-link>
-                        <router-link to="/auth" class="btn btn-primary btn-lg me-3">Зарегистрироваться</router-link>
-                        <router-link to="/auth" class="btn btn-outline-primary btn-lg">Войти</router-link>
+                        <!-- <router-link to="/profile" class="btn btn-primary btn-lg me-3">Личный кабинет</router-link> -->
+                        <router-link to="/auth" class="btn btn-outline-primary btn-lg">Вперед общаться</router-link>
                     </div>
                 </div>
                 <div class="col-md-6">

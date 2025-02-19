@@ -4,11 +4,11 @@
     <form @submit.prevent="handleSubmit">
       <div class="mb-3">
         <label for="firstName" class="form-label">Имя</label>
-        <input type="text" class="form-control" id="firstName" v-model="formData.firstName" required />
+        <input type="text" class="form-control" id="firstName" v-model="formData.first_name" required />
       </div>
       <div class="mb-3">
         <label for="lastName" class="form-label">Фамилия</label>
-        <input type="text" class="form-control" id="lastName" v-model="formData.lastName" required />
+        <input type="text" class="form-control" id="lastName" v-model="formData.last_name" required />
       </div>
       <div class="mb-3">
         <label for="birthdate" class="form-label">Дата рождения</label>
@@ -42,7 +42,14 @@ export default {
   },
   data() {
     return {
-      formData: { ...this.user }
+      formData: { 
+        first_name: this.user.first_name,
+        last_name: this.user.last_name,
+        birthdate: this.user.birthdate?.split('T')[0],
+        phone: this.user.phone,
+        email: this.user.email,
+        password: ''
+      }
     };
   },
   methods: {
