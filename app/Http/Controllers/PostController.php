@@ -26,6 +26,7 @@ class PostController extends Controller
         $post = Post::create([
             'user_id' => Auth::id(),
             'text' => $request->text,
+            'likes' => 0,
         ]);
 
         return response()->json($post, 201);

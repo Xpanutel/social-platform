@@ -6,13 +6,13 @@
                 <button @click="handleLike(post.id)"
                     :class="['btn', 'btn-sm', likedPosts.includes(post.id) ? 'btn-primary' : 'btn-outline-primary']"
                     :disabled="likedPosts.includes(post.id)">
-                    ❤️ {{ post.likes }}
+                    ❤️ {{ post.likes || 0 }}
                 </button>
-                <small class="text-muted">{{ post.comments.length }} комментариев</small>
+                <small class="text-muted">{{ (post.comments || []).length }} комментариев</small>
             </div>
             <div class="comments mt-3">
-                <div v-for="comment in post.comments" :key="comment.id" class="comment mb-2">
-                    <strong>{{ comment.user.name }}:</strong> {{ comment.text }}
+                <div v-for="comment in post.comments || []" :key="comment.id" class="comment mb-2">
+                    <strong>{{ comment.user?.name }}:</strong> {{ comment.text }}
                 </div>
                 <input type="text" class="form-control mt-2" v-model="newComments[post.id]"
                     @keyup.enter="handleComment(post.id)" placeholder="Добавить комментарий" />

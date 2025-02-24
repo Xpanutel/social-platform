@@ -112,7 +112,7 @@ export default {
             isLoginForm: true,
             access_token: '',
             loginData: {
-                identifier: '', // email
+                identifier: '', 
                 password: ''
             },
             registerData: {
@@ -124,13 +124,13 @@ export default {
                 password: '',
                 bio: ''
             },
-            errorMessage: '' // Для отображения ошибок
+            errorMessage: '' 
         };
     },
     methods: {
         toggleForm(formType) {
             this.isLoginForm = formType === 'login';
-            this.errorMessage = ''; // Очистка ошибок при переключении форм
+            this.errorMessage = ''; 
         },
         // Метод для авторизации
         async handleLogin() {
@@ -140,10 +140,8 @@ export default {
                     password: this.loginData.password
                 });
 
-                // Сохраняем токен в localStorage
                 localStorage.setItem('access_token', response.data.access_token);
 
-                // Перенаправляем пользователя на защищенную страницу
                 this.$router.push('/profile');
             } catch (error) {
                 if (error.response) {
@@ -158,20 +156,12 @@ export default {
         async handleRegister() {
             try {
                 const response = await axios.post('/api/register', this.registerData);
-
-                // Сохраняем токен в localStorage
                 localStorage.setItem('access_token', response.data.access_token);
-
-                // Перенаправляем пользователя на защищенную страницу
                 this.$router.push('/profile');
             } catch (error) {
                 if (error.response) {
-                    // Логируем ошибку
                     console.error('Ошибка при регистрации:', error.response.data);
-
-                    // Отображаем сообщение об ошибке
                     if (error.response.data.errors) {
-                        // Если есть ошибки валидации
                         this.errorMessage = Object.values(error.response.data.errors).join(', ');
                     } else {
                         this.errorMessage = error.response.data.message || 'Ошибка при регистрации';

@@ -56,11 +56,14 @@ export default {
                 const response = await axios.get('/api/me', {
                     headers: {
                         'Authorization': `Bearer ${localStorage.getItem('access_token')}`,
-                        'Accept': 'application/json' // Добавлено
+                        'Accept': 'application/json'
                     }
                 });
                 console.log('Данные пользователя:', response.data);
-                this.user = response.data;
+                this.user = {
+                    ...this.user,
+                    ...response.data
+                };
             } catch (error) {
                 console.error('Ошибка:', error.response);
             }
@@ -85,7 +88,13 @@ export default {
                         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                     }
                 });
-                this.posts.unshift(response.data);
+
+                this.posts.unshift({
+                    ...response.data,
+                    comments: response.data.comments || [],
+                    likes: response.data.likes || 0
+                });
+
             } catch (error) {
                 console.error('Ошибка при создании поста:', error);
                 alert('Не удалось опубликовать пост');
@@ -98,10 +107,16 @@ export default {
                         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                     }
                 });
+
                 const postIndex = this.posts.findIndex(post => post.id === postId);
                 if (postIndex !== -1) {
                     this.posts[postIndex].likes = response.data.likes;
-                    this.user.likedPosts.push(postId);
+
+                    if (this.user.likedPosts.includes(postId)) {
+                        this.user.likedPosts = this.user.likedPosts.filter(id => id !== postId);
+                    } else {
+                        this.user.likedPosts = [...this.user.likedPosts, postId];
+                    }
                 }
             } catch (error) {
                 console.error('Ошибка при лайке поста:', error);
@@ -115,9 +130,13 @@ export default {
                         'Authorization': `Bearer ${localStorage.getItem('access_token')}`
                     }
                 });
+
                 const postIndex = this.posts.findIndex(post => post.id === postId);
                 if (postIndex !== -1) {
-                    this.posts[postIndex].comments.push(response.data);
+                    this.posts[postIndex].comments.push({
+                        ...response.data,
+                        user: this.user
+                    });
                 }
             } catch (error) {
                 console.error('Ошибка при добавлении комментария:', error);
