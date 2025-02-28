@@ -18,4 +18,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts', [PostController::class, 'store']); 
     Route::post('/posts/{post}/like', [PostController::class, 'like']); 
     Route::post('/posts/{post}/comment', [PostController::class, 'comment']); 
+
+    Route::get('/user/{id}', [AuthController::class, 'getUserById']);
+    Route::get('/user/{id}/posts', [PostController::class, 'getUserPosts']);
 });

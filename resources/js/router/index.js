@@ -31,6 +31,12 @@ const routes = [
     name: 'InitiativeDetail',
     component: InitiativeDetail
   },
+  {
+    path: '/user/:id',
+    name: 'UserProfile',
+    component: () => import('@/views/UserProfile.vue'),
+    meta: { requiresAuth: true }
+}
 ];
 
 const router = createRouter({

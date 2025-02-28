@@ -12,6 +12,9 @@
                         <router-link to="/" class="nav-link">Главная</router-link>
                     </li>
                     <li class="nav-item">
+                        <router-link to="/profile" class="nav-link">Профиль</router-link>
+                    </li>
+                    <li class="nav-item">
                         <router-link to="/auth" class="nav-link btn btn-gradient ms-3">Войти</router-link>
                     </li>
                 </ul>

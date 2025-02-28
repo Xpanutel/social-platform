@@ -12,7 +12,10 @@
             </div>
             <div class="comments mt-3">
                 <div v-for="comment in post.comments || []" :key="comment.id" class="comment mb-2">
-                    <strong>{{ comment.user?.name }}:</strong> {{ comment.text }}
+                    <router-link :to="`/user/${comment.user.id}`" class="text-decoration-none">
+                        <strong>{{ comment.user?.first_name }} {{ comment.user?.last_name }}:</strong>
+                    </router-link>
+                    {{ comment.text }}
                 </div>
                 <input type="text" class="form-control mt-2" v-model="newComments[post.id]"
                     @keyup.enter="handleComment(post.id)" placeholder="Добавить комментарий" />

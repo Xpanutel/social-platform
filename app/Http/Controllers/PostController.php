@@ -53,4 +53,9 @@ class PostController extends Controller
 
         return response()->json($comment, 201);
     }
+
+    public function getUserPosts($id) {
+        $posts = Post::where('user_id', $id)->with('comments.user')->get();
+        return response()->json($posts);
+    }
 }
