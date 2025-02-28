@@ -8,7 +8,7 @@
                         <div class="card-body">
                             <h5 class="card-title">{{ initiative.title }}</h5>
                             <p class="card-text">{{ initiative.description }}</p>
-                            <small class="text-muted">Дата релиза: {{ initiative.releaseDate }}</small>
+                            <small class="text-muted">Дата релиза: {{ initiative.release_date }}</small>
                             <div class="mt-2">
                                 <span class="badge bg-primary">{{ initiative.supporters }} поддерживают</span>
                             </div>
@@ -25,48 +25,53 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'InitiativesPage',
     data() {
         return {
-            initiatives: [
-                {
-                    id: 1,
-                    title: 'Инициатива 1',
-                    description: 'Описание первой инициативы.',
-                    releaseDate: '2023-10-01',
-                    supporters: 120,
-                    author: 'Иван Иванов'
-                },
-                {
-                    id: 2,
-                    title: 'Инициатива 2',
-                    description: 'Описание второй инициативы.',
-                    releaseDate: '2023-10-15',
-                    supporters: 85,
-                    author: 'Петр Петров'
-                },
-                {
-                    id: 3,
-                    title: 'Инициатива 3',
-                    description: 'Описание третьей инициативы.',
-                    releaseDate: '2023-11-01',
-                    supporters: 200,
-                    author: 'Сидор Сидоров'
-                }
-            ]
+            initiatives: []
         };
     },
+    async created() {
+        await this.fetchInitiatives();
+    },
     methods: {
+        async fetchInitiatives() {
+            try {
+                const response = await axios.get('/api/initiatives', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                this.initiatives = response.data;
+            } catch (error) {
+                console.error('Ошибка при загрузке инициатив:', error);
+                alert('Не удалось загрузить инициативы');
+            }
+        },
         goToInitiative(id) {
             this.$router.push({ name: 'InitiativeDetail', params: { id } });
         },
-        supportInitiative(id) {
-            // Логика для поддержки инициативы
-            console.log(`Поддержана инициатива с ID: ${id}`);
+        async supportInitiative(id) {
+            try {
+                const response = await axios.post(`/api/initiatives/${id}/support`, {}, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                const initiativeIndex = this.initiatives.findIndex(initiative => initiative.id === id);
+                if (initiativeIndex !== -1) {
+                    this.initiatives[initiativeIndex].supporters = response.data.supporters;
+                }
+            } catch (error) {
+                console.error('Ошибка при поддержке инициативы:', error);
+                alert('Не удалось поддержать инициативу');
+            }
         }
     }
-}
+};
 </script>
 
 <style scoped>

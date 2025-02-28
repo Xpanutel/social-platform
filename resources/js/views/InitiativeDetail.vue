@@ -4,7 +4,7 @@
             <h1 class="display-4 fw-bold mb-4">{{ initiative.title }}</h1>
             <p class="lead mb-4">{{ initiative.description }}</p>
             <div class="mb-4">
-                <small class="text-muted">Дата релиза: {{ initiative.releaseDate }}</small>
+                <small class="text-muted">Дата релиза: {{ initiative.release_date }}</small>
                 <div class="mt-2">
                     <span class="badge bg-primary">{{ initiative.supporters }} поддерживают</span>
                 </div>
@@ -19,27 +19,54 @@
 </template>
 
 <script>
+import axios from 'axios';
+
 export default {
     name: 'InitiativeDetail',
     data() {
         return {
             initiative: {
                 id: this.$route.params.id,
-                title: 'Инициатива 1',
-                description: 'Описание первой инициативы.',
-                releaseDate: '2023-10-01',
-                supporters: 120,
-                author: 'Иван Иванов'
+                title: '',
+                description: '',
+                release_date: '',
+                supporters: 0,
+                author: ''
             }
         };
     },
+    async created() {
+        await this.fetchInitiative();
+    },
     methods: {
-        supportInitiative(id) {
-            // Логика для поддержки инициативы
-            console.log(`Поддержана инициатива с ID: ${id}`);
+        async fetchInitiative() {
+            try {
+                const response = await axios.get(`/api/initiatives/${this.$route.params.id}`, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                this.initiative = response.data;
+            } catch (error) {
+                console.error('Ошибка при загрузке инициативы:', error);
+                alert('Не удалось загрузить инициативу');
+            }
+        },
+        async supportInitiative(id) {
+            try {
+                const response = await axios.post(`/api/initiatives/${id}/support`, {}, {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('access_token')}`
+                    }
+                });
+                this.initiative.supporters = response.data.supporters;
+            } catch (error) {
+                console.error('Ошибка при поддержке инициативы:', error);
+                alert('Не удалось поддержать инициативу');
+            }
         }
     }
-}
+};
 </script>
 
 <style scoped>
