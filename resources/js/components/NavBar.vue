@@ -11,11 +11,14 @@
                     <li class="nav-item">
                         <router-link to="/" class="nav-link">Главная</router-link>
                     </li>
-                    <li class="nav-item">
+                    <li v-if="isAuthenticated" class="nav-item">
                         <router-link to="/profile" class="nav-link">Профиль</router-link>
                     </li>
-                    <li class="nav-item">
+                    <li class="nav-item" v-if="!isAuthenticated">
                         <router-link to="/auth" class="nav-link btn btn-gradient ms-3">Войти</router-link>
+                    </li>
+                    <li class="nav-item" v-if="isAuthenticated">
+                        <button @click="logout" class="nav-link btn btn-gradient ms-3 btn-logout">Выйти</button>
                     </li>
                 </ul>
             </div>
@@ -25,7 +28,32 @@
 
 <script>
 export default {
-    name: 'NavBar'
+    name: 'NavBar',
+    data() {
+        return {
+            isAuthenticated: false 
+        }
+    },
+    mounted() {
+        this.checkAuthStatus(); 
+        window.addEventListener('storage', this.checkAuthStatus); // Следим за изменениями в localStorage
+        this.$root.$on('update-auth-status', this.checkAuthStatus); // Слушаем глобальное событие
+    },
+    beforeUnmount() {
+        window.removeEventListener('storage', this.checkAuthStatus); // Убираем слушатель при уничтожении компонента
+        this.$root.$off('update-auth-status', this.checkAuthStatus); // Убираем слушатель глобального события
+    },
+    methods: {
+        checkAuthStatus() {
+            this.isAuthenticated = localStorage.getItem('access_token') !== null;
+        },
+        logout() {
+            localStorage.removeItem('access_token');
+            this.isAuthenticated = false; // Вручную обновляем состояние
+            this.$router.push('/auth');
+            this.$root.$emit('update-auth-status'); // Уведомляем другие компоненты
+        }
+    }
 }
 </script>
 
@@ -64,15 +92,23 @@ header {
     padding: 0.5rem 2rem;
     border-radius: 10px;
     transition: all 0.3s ease;
-    display: inline-block; 
-    min-width: 100px; 
-    text-align: center; 
+    display: inline-block;
+    min-width: 100px;
+    text-align: center;
+    cursor: pointer; 
 }
-
 
 .btn-gradient:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 15px rgba(255, 107, 53, 0.3);
+}
+
+.btn-logout {
+    background: linear-gradient(135deg, #dc3545, #c82333); 
+}
+
+.btn-logout:hover {
+    box-shadow: 0 4px 15px rgba(220, 53, 69, 0.3); 
 }
 
 .navbar-toggler {

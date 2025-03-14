@@ -2,12 +2,17 @@
     <div class="initiatives-page">
         <main class="container mt-5">
             <h1 class="display-4 fw-bold mb-4">Инициативы</h1>
+            <!-- Кнопка создания инициативы -->
+            <router-link to="/initiatives/create" class="btn btn-outline-primary btn-lg mb-4">
+                Создать инициативу
+            </router-link>
             <div class="row">
                 <div class="col-md-4 mb-4" v-for="(initiative, index) in initiatives" :key="index">
                     <div class="card h-100 shadow" @click="goToInitiative(initiative.id)">
                         <div class="card-body">
                             <h5 class="card-title">{{ initiative.title }}</h5>
-                            <p class="card-text">{{ initiative.description }}</p>
+                            <!-- Обрезанное описание -->
+                            <p class="card-text">{{ truncateDescription(initiative.description, 150) }}</p>
                             <small class="text-muted">Дата релиза: {{ initiative.release_date }}</small>
                             <div class="mt-2">
                                 <span class="badge bg-primary">{{ initiative.supporters }} поддерживают</span>
@@ -69,6 +74,12 @@ export default {
                 console.error('Ошибка при поддержке инициативы:', error);
                 alert('Не удалось поддержать инициативу');
             }
+        },
+        truncateDescription(text, maxLength) {
+            if (text.length > maxLength) {
+                return text.substring(0, maxLength) + '...';
+            }
+            return text;
         }
     }
 };

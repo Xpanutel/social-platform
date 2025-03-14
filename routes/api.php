@@ -1,6 +1,5 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\PostController;
@@ -13,11 +12,7 @@ Route::post('/login', [AuthController::class, 'login']);
 // Публичные маршруты
 Route::get('/initiatives', [InitiativeController::class, 'index']); 
 Route::get('/initiatives/{id}', [InitiativeController::class, 'show']); 
-
-Route::get('/test-initiatives', function () {
-    return response()->json(['message' => 'API is working for initiatives!']);
-});
-
+Route::post('/initiatives/{id}/support', [InitiativeController::class, 'support']); 
 
 // Защищенные маршруты (требуют аутентификации)
 Route::middleware('auth:sanctum')->group(function () {
@@ -30,5 +25,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/posts/{post}/like', [PostController::class, 'like']); 
     Route::post('/posts/{post}/comment', [PostController::class, 'comment']); 
 
-    Route::post('/initiatives/{id}/support', [InitiativeController::class, 'support']); 
+    Route::post('/initiatives', [InitiativeController::class, 'store']); 
 });
